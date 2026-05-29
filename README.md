@@ -18,7 +18,7 @@
 ### 第一步：下载脚本
 
 ```bash
-curl -fsSL -o ~/apply_vscode_profile.py https://raw.githubusercontent.com/northwang-lucky/apply_vscode_profile/main/apply_vscode_profile.py
+curl -fsSL -o ./apply_vscode_profile.py https://raw.githubusercontent.com/northwang-lucky/apply_vscode_profile/main/apply_vscode_profile.py
 ```
 
 ### 第二步：准备 Profile
@@ -40,19 +40,19 @@ curl -fsSL -o ~/my-profile.code-profile <YOUR_PROFILE_URL>
 
 ```bash
 # 基础用法 — 应用到 VSCode 稳定版（四项全部生效）
-python3 ~/apply_vscode_profile.py ~/Downloads/custom.code-profile
+python3 ./apply_vscode_profile.py ~/Downloads/custom.code-profile
 
 # 应用到 VSCode Insiders
-python3 ~/apply_vscode_profile.py ~/Downloads/custom.code-profile --editor insiders
+python3 ./apply_vscode_profile.py ~/Downloads/custom.code-profile --editor insiders
 
 # 模拟运行 — 只预览，不实际写入
-python3 ~/apply_vscode_profile.py ~/Downloads/custom.code-profile --dry-run
+python3 ./apply_vscode_profile.py ~/Downloads/custom.code-profile --dry-run
 
 # 只应用 settings 和 keybindings
-python3 ~/apply_vscode_profile.py ~/Downloads/custom.code-profile --apply settings,keybindings
+python3 ./apply_vscode_profile.py ~/Downloads/custom.code-profile --apply settings,keybindings
 
 # 只安装扩展
-python3 ~/apply_vscode_profile.py ~/Downloads/custom.code-profile --apply extensions
+python3 ./apply_vscode_profile.py ~/Downloads/custom.code-profile --apply extensions
 ```
 
 ---
