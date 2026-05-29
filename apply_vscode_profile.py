@@ -507,6 +507,8 @@ def main():
   python apply_vscode_profile.py ./my-profile.code-profile
   python apply_vscode_profile.py ./my-profile.code-profile --editor insiders
   python apply_vscode_profile.py ./my-profile.code-profile --dry-run
+  python apply_vscode_profile.py ./my-profile.code-profile --apply settings,keybindings
+  python apply_vscode_profile.py ./my-profile.code-profile --apply extensions
         """,
     )
     parser.add_argument("profile", help="导出的 VS Code profile JSON 文件路径")
@@ -522,6 +524,11 @@ def main():
         help="模拟运行，显示将要执行的操作但不实际写入",
     )
     parser.add_argument(
+        "--apply",
+        default="settings,keybindings,extensions,globalState",
+        help="指定要应用的配置项，逗号分隔 (默认: settings,keybindings,extensions,globalState)",
+    )
+    parser.add_argument(
         "--skip-extensions", action="store_true", help="跳过扩展安装"
     )
     parser.add_argument(
@@ -529,6 +536,23 @@ def main():
     )
 
     args = parser.parse_args()
+
+    # 解析 --apply 参数
+    allowed_items = {
+        item.strip().lower()
+        for item in args.apply.split(",")
+        if item.strip()
+    }
+
+    def should_apply(name):
+        name = name.lower()
+        if name not in allowed_items:
+            return False
+        if name == "extensions" and args.skip_extensions:
+            return False
+        if name == "globalstate" and args.skip_global_state:
+            return False
+        return True
 
     profile_path = Path(args.profile).expanduser().resolve()
     if not profile_path.exists():
@@ -560,10 +584,10 @@ def main():
     ext_count = len(parsed.get("extensions", []))
     gs_count = len(parsed.get("globalState", {}))
 
-    print(f"  settings:     {'✓' if has_settings else '✗'} ({settings_size} 字符)")
-    print(f"  keybindings:  {'✓' if has_keybindings else '✗'} ({kb_count} 条)")
-    print(f"  extensions:   {'✓' if has_extensions else '✗'} ({ext_count} 个)")
-    print(f"  globalState:  {'✓' if has_global_state else '✗'} ({gs_count} 项)")
+    print(f"  settings:     {'✓' if has_settings else '✗'} ({settings_size} 字符) {'→ 将应用' if should_apply('settings') else ''}")
+    print(f"  keybindings:  {'✓' if has_keybindings else '✗'} ({kb_count} 条) {'→ 将应用' if should_apply('keybindings') else ''}")
+    print(f"  extensions:   {'✓' if has_extensions else '✗'} ({ext_count} 个) {'→ 将应用' if should_apply('extensions') else ''}")
+    print(f"  globalState:  {'✓' if has_global_state else '✗'} ({gs_count} 项) {'→ 将应用' if should_apply('globalState') else ''}")
 
     if not any([has_settings, has_keybindings, has_extensions, has_global_state]):
         print("\n配置文件为空，无需操作。")
@@ -582,16 +606,16 @@ def main():
     # 应用各项配置
     all_ok = True
 
-    if has_settings:
+    if has_settings and should_apply("settings"):
         all_ok &= apply_settings(parsed["settings"], user_dir, args.dry_run)
 
-    if has_keybindings:
+    if has_keybindings and should_apply("keybindings"):
         all_ok &= apply_keybindings(parsed["keybindings"], user_dir, args.dry_run)
 
-    if has_global_state and not args.skip_global_state:
+    if has_global_state and should_apply("globalState"):
         all_ok &= apply_global_state(parsed["globalState"], user_dir, args.dry_run)
 
-    if has_extensions and not args.skip_extensions:
+    if has_extensions and should_apply("extensions"):
         all_ok &= apply_extensions(parsed["extensions"], args.editor, args.dry_run)
 
     print(f"\n{'='*60}")
