@@ -528,12 +528,6 @@ def main():
         default="settings,keybindings,extensions,globalState",
         help="指定要应用的配置项，逗号分隔 (默认: settings,keybindings,extensions,globalState)",
     )
-    parser.add_argument(
-        "--skip-extensions", action="store_true", help="跳过扩展安装"
-    )
-    parser.add_argument(
-        "--skip-global-state", action="store_true", help="跳过 globalState"
-    )
 
     args = parser.parse_args()
 
@@ -545,14 +539,7 @@ def main():
     }
 
     def should_apply(name):
-        name = name.lower()
-        if name not in allowed_items:
-            return False
-        if name == "extensions" and args.skip_extensions:
-            return False
-        if name == "globalstate" and args.skip_global_state:
-            return False
-        return True
+        return name.lower() in allowed_items
 
     profile_path = Path(args.profile).expanduser().resolve()
     if not profile_path.exists():

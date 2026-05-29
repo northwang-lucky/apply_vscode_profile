@@ -39,7 +39,7 @@ curl -fsSL -o ~/my-profile.code-profile <YOUR_PROFILE_URL>
 ### 第三步：执行应用
 
 ```bash
-# 基础用法 — 应用到 VSCode 稳定版
+# 基础用法 — 应用到 VSCode 稳定版（四项全部生效）
 python3 ~/apply_vscode_profile.py ~/Downloads/custom.code-profile
 
 # 应用到 VSCode Insiders
@@ -47,6 +47,12 @@ python3 ~/apply_vscode_profile.py ~/Downloads/custom.code-profile --editor insid
 
 # 模拟运行 — 只预览，不实际写入
 python3 ~/apply_vscode_profile.py ~/Downloads/custom.code-profile --dry-run
+
+# 只应用 settings 和 keybindings
+python3 ~/apply_vscode_profile.py ~/Downloads/custom.code-profile --apply settings,keybindings
+
+# 只安装扩展
+python3 ~/apply_vscode_profile.py ~/Downloads/custom.code-profile --apply extensions
 ```
 
 ---
@@ -71,7 +77,7 @@ python3 ~/apply_vscode_profile.py ~/Downloads/custom.code-profile --dry-run
 
 ```
 usage: apply_vscode_profile.py [-h] [--editor {code,insiders}] [--dry-run]
-                               [--skip-extensions] [--skip-global-state]
+                               [--apply APPLY]
                                profile
 
 位置参数:
@@ -82,8 +88,8 @@ usage: apply_vscode_profile.py [-h] [--editor {code,insiders}] [--dry-run]
   --editor {code,insiders}
                           目标编辑器（默认：code）
   --dry-run               模拟运行，只显示操作不实际写入
-  --skip-extensions       跳过扩展安装
-  --skip-global-state     跳过 globalState 应用
+  --apply APPLY           指定要应用的配置项，逗号分隔
+                          （默认：settings,keybindings,extensions,globalState）
 ```
 
 ---
