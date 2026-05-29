@@ -405,6 +405,11 @@ def apply_extensions(ext_data, editor="code", dry_run=False):
         if not ext_id:
             continue
 
+        # 跳过 GitHub Copilot Chat
+        if ext_id.lower() == "github.copilot-chat":
+            print(f"  - [{display_name}] 已跳过（默认排除）")
+            continue
+
         is_installed = ext_id.lower() in installed
 
         if is_installed:
